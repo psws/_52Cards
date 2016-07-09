@@ -1,0 +1,293 @@
+﻿The object is to have SOC with no New() of dependent objects
+In the Repository for the ControlController, the constructor is changed to         
+		/// <summary>
+        /// Public constructor to initialize product service instance
+        /// </summary>
+        public ControlController(IControlService ControlService)
+        {
+
+            _ControlService = ControlService;
+        }
+The IcontrolService is injected into the ControlController.cs constructor.
+
+We need to have a manager of the instatntion of the Concrete ControlService
+We use MEF Management Extensibility framework to remove the Logqso.mvc.ui module from needing the Data Model
+as a result of all of the registrationtypes being in external modules.
+	For example:
+		container.RegisterType<IProductServices, ProductServices>().RegisterType<UnitOfWork>(new HierarchicalLifetimeManager()); 
+		UnitofWork is in the DataModel module. This is bad design.
+MEF requires a central manager (ComponentLoade() that will find all of the '[Export(typeof(IComponent))]'  modules with  Export[] marked methods.
+	Example: In DependencyResolver.cs
+		  [Export(typeof(IComponent))]
+			public class DependencyResolver : IComponent
+			{
+				public void SetUp(IRegisterComponent registerComponent)
+				{
+					registerComponent.RegisterType<IControlService, ControlService>();
+
+				}
+			} 
+You sprinkle these DependencyResolver.cs files in every module that has a dependency Injection.
+The ComponentLoader() finds these modules, calls their SetUp() routine and then uses Unity to registerType the IControlService mapping.
+It appars that registering the top-level ControlService takes care of the lower dependent layers, used by  Top Level.
+UnitOfWork is in the DataModel, but it appears to not require direct RegisterType<>() in the DataModel.
+The IComponent Interface has a SetOp method. You need to ensure you are calling all of your top level registraations in this method.
+
+The componentLoader()uses the  WEB API Unity  and MVC API Unity to instantiate the objects.
+
+Install the following via Nuget
+	Unity.WebApi
+		Installs App_Start/unityConfig.cs
+			Without MEF, the injected objects are regitered in this file
+	Unity bootstrapper for ASPNET.mvc
+		This installs the Unity application block, 4 Microsoft.Unity libs
+		overwrites App_Start/unityConfig.cs
+		Creates App_Start/UnityMvcActivator.cs
+			This is called autonatically at startup
+				[assembly: WebActivatorEx.PreApplicationStartMethod(typeof(Logqso.mvc.ui.App_Start.UnityWebActivator), "Start")]
+				[assembly: WebActivatorEx.ApplicationShutdownMethod(typeof(Logqso.mvc.ui.App_Start.UnityWebActivator), "Shutdown")]
+
+Create a Logqso.mvc.Resolver MEF class library project
+create a Interfaces directory
+	Add Icomponent.cs
+	-------------------------------- Add this Code --------------------------------
+		namespace logqso.mvc.Resolver_MEF.Interfaces
+		{
+			/// <summary>
+			/// Register underlying types with unity.
+			/// </summary>
+			public interface IComponent
+			{
+				void SetUp(IRegisterComponent registerComponent);
+
+			}
+		}
+
+	----------------------------- end of code --------------------------------------
+
+	Add IComponentRegister.cs
+	-------------------------------- Add this Code --------------------------------
+		namespace logqso.mvc.Resolver_MEF.Interfaces
+		{
+			public interface IRegisterComponent
+			{
+				/// <summary>
+				/// Register type method
+				/// </summary>
+				/// <typeparam name="TFrom"></typeparam>
+				/// <typeparam name="TTo"></typeparam>
+				/// <param name="withInterception"></param>
+				void RegisterType<TFrom, TTo>(bool withInterception = false) where TTo : TFrom;
+
+				/// <summary>
+				/// Register type with container controlled life time manager
+				/// </summary>
+				/// <typeparam name="TFrom"></typeparam>
+				/// <typeparam name="TTo"></typeparam>
+				/// <param name="withInterception"></param>
+				void RegisterTypeWithControlledLifeTime<TFrom, TTo>(bool withInterception = false) where TTo : TFrom;
+			}
+		}
+----------------------------- end of code --------------------------------------
+
+In Logqso.mvc.Resolver MEF project, add a ComponentLoader.cs class.
+	Add:
+		A project Reference to System.ComponenetModel.Composition
+		using System.ComponentModel.Composition.Hosting;
+`		using System.ComponentModel.Composition.Primitives;
+		using Microsoft.Practices.Unity
+			Go to nuget -> installed packages-> Unity(application block)->manage
+			add Resolver MEF project
+
+-------------------------------- Add this Code --------------------------------
+    class ComponentLoader
+    {
+        public static void LoadContainer(IUnityContainer container, string path, string pattern)
+        {
+            var dirCat = new DirectoryCatalog(path, pattern);
+            var importDef = BuildImportDefinition();
+            try
+            {
+                using (var aggregateCatalog = new AggregateCatalog())
+                {
+                    aggregateCatalog.Catalogs.Add(dirCat);
+
+                    using (var componsitionContainer = new CompositionContainer(aggregateCatalog))
+                    {
+                        IEnumerable<Export> exports = componsitionContainer.GetExports(importDef);
+
+                        IEnumerable<IComponent> modules =
+                            exports.Select(export => export.Value as IComponent).Where(m => m != null);
+
+                        var registerComponent = new RegisterComponent(container);
+                        foreach (IComponent module in modules)
+                        {
+                            module.SetUp(registerComponent);
+                        }
+                    }
+                }
+            }
+            catch (ReflectionTypeLoadException typeLoadException)
+            {
+                var builder = new StringBuilder();
+                foreach (Exception loaderException in typeLoadException.LoaderExceptions)
+                {
+                    builder.AppendFormat("{0}\n", loaderException.Message);
+                }
+
+                throw new TypeLoadException(builder.ToString(), typeLoadException);
+            }
+        }
+
+        private static ImportDefinition BuildImportDefinition()
+        {
+            return new ImportDefinition(
+                def => true, typeof(IComponent).FullName, ImportCardinality.ZeroOrMore, false, false);
+        }
+    }
+
+    internal class RegisterComponent : IRegisterComponent
+    {
+        private readonly IUnityContainer _container;
+
+        public RegisterComponent(IUnityContainer container)
+        {
+            this._container = container;
+
+            //Register interception behaviour if any
+        }
+
+        public void RegisterType<TFrom, TTo>(bool withInterception = false) where TTo : TFrom
+        {
+            if (withInterception)
+            {
+                //register with interception
+            }
+            else
+            {
+                this._container.RegisterType<TFrom, TTo>();
+            }
+        }
+
+        public void RegisterTypeWithControlledLifeTime<TFrom, TTo>(bool withInterception = false) where TTo : TFrom
+        {
+            this._container.RegisterType<TFrom, TTo>(new ContainerControlledLifetimeManager());
+        }
+
+    }
+----------------------------- end of code --------------------------------------
+
+In the project that owns the interface creat a DependencyResolver.cs file
+Our Logqso.mvc.Domain is the owner of the ControlService.
+Add a DependencyResolver.cs file in that project
+  A project Reference to System.ComponenetModel.Composition
+	-------------------------------- Add this Code --------------------------------
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.ComponentModel.Composition;
+using Resolver;
+
+
+namespace Logqso.mvc.domain
+{
+ [Export(typeof(IComponent))]
+    public class DependencyResolver : IComponent
+    {
+        public void SetUp(IRegisterComponent registerComponent)
+        {
+            registerComponent.RegisterType<IControlService, ControlService>();
+
+        }
+    }
+
+
+Modify theLogqso.mvc.ui/Ap_Start/UnityMvcActivator.cs project to call thee ComponentLoader.LoadContainer() and Resolve the Injected Objects
+	using System.Linq;
+	using System.Web.Mvc;
+	using System.Web.Http;
+	using Logqso.mvc.Resolver_MEF;
+	using Microsoft.Practices.Unity;
+	using Microsoft.Practices.Unity.Mvc;
+
+	[assembly: WebActivatorEx.PreApplicationStartMethod(typeof(Logqso.mvc.ui.App_Start.UnityWebActivator), "Start")]
+	[assembly: WebActivatorEx.ApplicationShutdownMethod(typeof(Logqso.mvc.ui.App_Start.UnityWebActivator), "Shutdown")]
+
+	namespace Logqso.mvc.ui.App_Start
+	{
+		/// <summary>Provides the bootstrapping for integrating Unity with ASP.NET MVC.</summary>
+		public static class UnityWebActivator
+		{
+			public static void Start() 
+			{
+				var container = UnityConfig.GetConfiguredContainer();
+
+				FilterProviders.Providers.Remove(FilterProviders.Providers.OfType<FilterAttributeFilterProvider>().First());
+				FilterProviders.Providers.Add(new UnityFilterAttributeFilterProvider(container));
+
+	#if NoMEF
+				DependencyResolver.SetResolver(new UnityDependencyResolver(container));
+	#else
+				//Component initialization via MEF
+					//jims: no export[ ] in app so not needed, forwebapi
+				//Resolver.Resolver.ComponentLoader.LoadContainer(container, ".\\bin", "Logqsp.dll");
+				Resolver_MEF.ComponentLoader.LoadContainer(container, ".\\bin", "LogQso.mvc.Domain.dll");
+				//jims: MVC resolver
+				System.Web.Mvc.DependencyResolver.SetResolver(new UnityDependencyResolver(container));
+ 
+				// register dependency resolver for WebAPI RC
+				//jims: Webapi resolver
+				 GlobalConfiguration.Configuration.DependencyResolver = new Unity.WebApi.UnityDependencyResolver(container);
+
+
+	#endif
+				// TODO: Uncomment if you want to use PerRequestLifetimeManager
+				// Microsoft.Web.Infrastructure.DynamicModuleHelper.DynamicModuleUtility.RegisterModule(typeof(UnityPerRequestHttpModule));
+			}
+
+			/// <summary>Disposes the Unity container when the application is shut down.</summary>
+			public static void Shutdown()
+			{
+				var container = UnityConfig.GetConfiguredContainer();
+				container.Dispose();
+			}
+		}
+	}
+----------------------------- end of code --------------------------------------
+
+The helpcontroller needs to be modified to avoid getting the string p 'None' fault
+	http://stackoverflow.com/questions/18389309/the-type-string-cannot-be-constructed
+	Your api controller has a dependency on the constructor from HttpConfiguration. 
+	The container problably does not have this definition for this type and consequently does not know how to solve it 
+	and the string on the error message should come from this type as a dependency. 
+	I recommend you use the GlobalConfiguration static class and access the Configuration property to get a HttpConfiguration instance.
+	 You could abstract it in a property, for sample:
+
+In the Areas/HelpPage/Cotrollers/HelpPageController.cs file, comment out the constructor, add static HttpConfiguration Configuration
+ --------------------------- Modify code-----------------------------------------------------
+  public class HelpController : Controller
+    {
+        private const string ErrorViewName = "Error";
+
+        //public HelpController()
+        //    : this(GlobalConfiguration.Configuration)
+        //{
+        //}
+
+        //public HelpController(HttpConfiguration config)
+        //{
+        //    Configuration = config;
+        //}
+
+        //public HttpConfiguration Configuration { get; private set; }
+
+        protected static HttpConfiguration Configuration
+        {
+            get { return GlobalConfiguration.Configuration; }
+        }
+    public ActionResult Index()
+    {
+----------------------------- end of code --------------------------------------

@@ -1,0 +1,69 @@
+﻿Using installed extendion Microsoft entity power toos beta 4
+right click on Logqsomvc.DataModel project
+select entity framework select reverse engineer code first
+set server to PSS60\SQL2014
+Set sql sever account radio button
+enter User anme jims9m8r
+enter password jims9m8r
+select a database name = ContestqsoData
+Click advanced tab
+go to  Security section
+Check persist security informatin = true
+
+A ContestqsoData Data models directory will be created.
+Ths directory has a Sub directory Mapping
+Perform the following steps to separate the Entities project from EF6
+Move the Logqso.mvc.DataModel/Models folder to:
+	Logqso.mvs.DataModel/LogData foldeer
+	Leave the LogDataContext.cs file in the Logqso.mvs.DataModel/LogData/Models foldeer
+	Move all the remaining files, in the Models folder to the Logqso.mvc.Entities/LogDataEntity foldeer.
+	Leave the Logqso.mvs.DataModel/LogData/Models/Mapping folder in the Logqso.mvs.DataModel/LogData/Models folder.
+		be sure to change its namespace to Logqso.mvc.DataModel.LogData.Models
+
+	edit every file in the Logqso.mvs.DataModel/LogData/Models/mapping folder change/add the following:
+		using Logqso.mvc.Entities.LogDataEntity;
+
+		namespace Logqso.mvc.DataModel.LogData.Models.Mapping
+
+	edit every file in the Logqso.mvc.Entities/LogDataEntity folder change/add the following:
+		using Infrastructure;
+
+		namespace Logqso.mvc.Entities.LogDataEntity
+		//evety file must derive from  : Entity in the LogControlEntity
+		public partial class Qso : Entity
+
+	edit the Logqso.mvs.DataModel/LogData/Models/ContestqsoDataContext file ( needs to derive from DataContext
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
+using Repository.Pattern.Ef6;
+
+using Logqso.mvc.DataModel.LogData.Models.Mapping;
+using Logqso.mvc.Entities.LogDataEntity;
+
+using Repository.Pattern.Extensions.interfaces;
+
+namespace Logqso.mvc.DataModel.LogData.Models
+{
+    public partial class ContestqsoDataContext : DataContext, ILogqsoDataContext
+    {
+        static ContestqsoDataContext()
+        {
+            Database.SetInitializer<ContestqsoDataContext>(null);
+        }
+
+        public ContestqsoDataContext()
+#if CONTESTQSODEBUG || CONTESTQSORELEASE
+            : base("Name=LogDataDBhostfest")
+#elif CONTESTQSO1n1DEBUG
+        : base("Name=LogDataDB1and1")
+#elif CONTESTQSOSQL2012
+            : base("Name=LogDataDBsql2012")
+#else
+            : base("Name=LogDataDB")
+#endif        {
+        }
+
+
+
+
+
