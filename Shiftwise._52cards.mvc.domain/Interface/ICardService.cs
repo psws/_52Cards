@@ -8,7 +8,7 @@ using Shiftwise._52cards.mvc.dto;
 
 namespace Shiftwise._52cards.mvc.domain.Interface
 {
-    public interface ICardService
+    public interface ICardService :  IDisposable
     {
 
         Task<IEnumerable<CardElementDTO>> SortCards(DataCardInfoDto DataCardInfoDto, string username);

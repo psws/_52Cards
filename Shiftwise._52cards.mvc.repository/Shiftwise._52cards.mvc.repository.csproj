@@ -81,6 +81,7 @@
     <Compile Include="CardDeck.cs" />
     <Compile Include="DependencyResolver.cs" />
     <Compile Include="IRepository.cs" />
+    <Compile Include="QueryExtensions.cs" />
     <Compile Include="Repository.cs" />
     <Compile Include="GenericDataRepository.cs" />
     <Compile Include="IGenericDataRepository.cs" />

@@ -15,7 +15,7 @@ namespace Shiftwise._52cards.mvc.repository
         public async Task<IEnumerable<CardElementDTO>> GetSortedCards(DataCardInfoDto DataCardInfoDto, string username)
         {
             IEnumerable<CardElementDTO> CardElementDTOs = null;
-            if (DataCardInfoDto.CardElementDTOs.Length > 0 )
+            if (DataCardInfoDto.CardElementDTOs != null && DataCardInfoDto.CardElementDTOs.Length > 0)
             { //Sort deck in function Parameter
                 CardElementDTOs = DataCardInfoDto.CardElementDTOs.OrderByDescending(x=>x.Value);
             }
@@ -23,7 +23,10 @@ namespace Shiftwise._52cards.mvc.repository
             {  //get deck from database
 #if NoDB
                 CardElementDTOs = CardDeck.GetCardDeck(DataCardInfoDto.Game);
-                CardElementDTOs = CardElementDTOs.OrderByDescending(x => x.Value).AsEnumerable();
+                if (CardElementDTOs != null)
+                {
+                    CardElementDTOs = CardElementDTOs.OrderByDescending(x => x.Value).AsEnumerable();
+                }
 #else
                //using (var context = new ContestqsoDataEntities())
                 //{
@@ -45,7 +48,7 @@ namespace Shiftwise._52cards.mvc.repository
         public async Task<IEnumerable<CardElementDTO>> GetShuffledCards(DataCardInfoDto DataCardInfoDto, string username)
         {
             IEnumerable<CardElementDTO> CardElementDTOs = null;
-            if (DataCardInfoDto.CardElementDTOs.Length > 0)
+            if (DataCardInfoDto.CardElementDTOs != null && DataCardInfoDto.CardElementDTOs.Length > 0)
             { //Sort deck in function Parameter
                 //https://blog.codinghorror.com/shuffling/
                 CardElementDTOs = DataCardInfoDto.CardElementDTOs.OrderBy(a => Guid.NewGuid());
@@ -53,6 +56,27 @@ namespace Shiftwise._52cards.mvc.repository
             }
             return CardElementDTOs;
         }
+
+        private bool disposed = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!this.disposed)
+            {
+                if (disposing)
+                {
+                    //context.Dispose();
+                }
+            }
+            this.disposed = true;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
 
     }
 

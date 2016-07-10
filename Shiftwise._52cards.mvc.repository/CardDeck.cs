@@ -10,7 +10,7 @@ namespace Shiftwise._52cards.mvc.repository
     public static class CardDeck
     {
 
-        static List<CardElementDTO> CardElementDTOBridgeList = new List<CardElementDTO>() {
+        public static List<CardElementDTO> CardElementDTOBridgeList = new List<CardElementDTO>() {
                 new CardElementDTO {DeckId= "Ace_Club", Value=14, CardSuitEnum = CardSuitEnum.CLUB},
                 new CardElementDTO {DeckId= "King_Club", Value=13, CardSuitEnum = CardSuitEnum.CLUB},
                 new CardElementDTO {DeckId= "Queen_Club", Value=12, CardSuitEnum = CardSuitEnum.CLUB},
@@ -70,7 +70,20 @@ namespace Shiftwise._52cards.mvc.repository
             List<CardElementDTO> CardElementDTOs = null;
             if (Game == "Bridge")
 	        {
-		        CardElementDTOs = CardElementDTOBridgeList;
+            //http://stackoverflow.com/questions/222598/how-do-i-clone-a-generic-list-in-c
+                //clone list
+                CardElementDTOs = new List<CardElementDTO>();
+
+                foreach (var item in CardElementDTOBridgeList)
+                {
+                    CardElementDTO CardElementDTO = new CardElementDTO()
+                    {
+                        DeckId = item.DeckId,
+                        CardSuitEnum = item.CardSuitEnum,
+                        Value = item.Value
+                    };
+                    CardElementDTOs.Add(CardElementDTO);
+                }
 	        }
             return CardElementDTOs;
         }
