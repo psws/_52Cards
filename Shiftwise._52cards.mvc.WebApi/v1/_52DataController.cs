@@ -36,7 +36,7 @@ namespace Shiftwise._52cards.mvc.WebApi.v1
         public async Task<IHttpActionResult> SortCards(DataCardInfoDto DataCardInfoDto)
         {
             string Username = Shiftwise._52cards.mvc.common.definitions.Username;
-            bool val1 = (System.Web.HttpContext.Current.User != null) && System.Web.HttpContext.Current.User.Identity.IsAuthenticated;
+            bool val1 = (System.Web.HttpContext.Current !=null && System.Web.HttpContext.Current.User != null) && System.Web.HttpContext.Current.User.Identity.IsAuthenticated;
             if (val1)
             {
                 Username = System.Web.HttpContext.Current.User.Identity.Name;
@@ -65,7 +65,7 @@ namespace Shiftwise._52cards.mvc.WebApi.v1
         public async Task<IHttpActionResult> ShuffleCards(DataCardInfoDto DataCardInfoDto)
         {
             string Username = Shiftwise._52cards.mvc.common.definitions.Username;
-            bool val1 = (System.Web.HttpContext.Current.User != null) && System.Web.HttpContext.Current.User.Identity.IsAuthenticated;
+            bool val1 = (System.Web.HttpContext.Current !=null && System.Web.HttpContext.Current.User != null) && System.Web.HttpContext.Current.User.Identity.IsAuthenticated;
             if (val1)
             {
                 Username = System.Web.HttpContext.Current.User.Identity.Name;

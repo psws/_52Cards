@@ -7,9 +7,9 @@ namespace Shiftwise._52cards.mvc.common.Enum
 {
     public enum CardSuitEnum
     {
-        SPADE = 1,
+        CLUB = 1,
         DIAMOND,
         HEART,
-        CLUB
+        SPADE
     }
 }

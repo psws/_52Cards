@@ -84,7 +84,7 @@ label[id^='Ctrl'] {
 }
 @media only screen and (max-width: 460px) {
  #CardListPanel { font-size: .66em; width:378px; Height: 230px;  }
-  #CardCon { padding-left: 0x;  }
+  #CardCon { padding-left: 0px;  }
       [id^='list']{ padding-right: 0px; padding-left: 0px;}
 }
 @media only screen and (max-width: 340px) {
