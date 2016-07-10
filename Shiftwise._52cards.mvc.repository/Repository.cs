@@ -17,7 +17,7 @@ namespace Shiftwise._52cards.mvc.repository
             IEnumerable<CardElementDTO> CardElementDTOs = null;
             if (DataCardInfoDto.CardElementDTOs != null && DataCardInfoDto.CardElementDTOs.Length > 0)
             { //Sort deck in function Parameter
-                CardElementDTOs = DataCardInfoDto.CardElementDTOs.OrderByDescending(x=>x.Value);
+                CardElementDTOs = DataCardInfoDto.CardElementDTOs.OrderBy(x=>x.Value);
             }
             else
             {  //get deck from database
@@ -25,7 +25,7 @@ namespace Shiftwise._52cards.mvc.repository
                 CardElementDTOs = CardDeck.GetCardDeck(DataCardInfoDto.Game);
                 if (CardElementDTOs != null)
                 {
-                    CardElementDTOs = CardElementDTOs.OrderByDescending(x => x.Value).AsEnumerable();
+                    CardElementDTOs = CardElementDTOs.OrderBy(x => x.Value).AsEnumerable();
                 }
 #else
                //using (var context = new ContestqsoDataEntities())
@@ -50,9 +50,18 @@ namespace Shiftwise._52cards.mvc.repository
             IEnumerable<CardElementDTO> CardElementDTOs = null;
             if (DataCardInfoDto.CardElementDTOs != null && DataCardInfoDto.CardElementDTOs.Length > 0)
             { //Sort deck in function Parameter
+ 
+#if false
                 //https://blog.codinghorror.com/shuffling/
-                CardElementDTOs = DataCardInfoDto.CardElementDTOs.OrderBy(a => Guid.NewGuid());
-
+                //CardElementDTOs = DataCardInfoDto.CardElementDTOs.OrderBy(a => Guid.NewGuid());
+#else
+                //or Fisher-Yates
+                //http://stackoverflow.com/questions/273313/randomize-a-listt/1262619#1262619
+                Random rnd1 = new Random();
+                DataCardInfoDto.CardElementDTOs.Shuffle(rnd1);
+                CardElementDTOs = new List<CardElementDTO>();
+                CardElementDTOs = DataCardInfoDto.CardElementDTOs;
+#endif
             }
             return CardElementDTOs;
         }

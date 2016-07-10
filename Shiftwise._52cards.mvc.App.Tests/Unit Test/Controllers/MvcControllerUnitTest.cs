@@ -45,7 +45,7 @@ namespace Shiftwise52cards.mvc.App.Tests.Unit_Test
             Assert.IsFalse(caught);  //exception
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result, typeof(ViewResult));
-            Assert.AreEqual(result.ViewEngineCollection.Count, 2);
+            Assert.AreEqual(2, result.ViewEngineCollection.Count);
             //Assert.AreEqual("_52card", result.ViewData["Title"]);
         }
 
@@ -72,7 +72,7 @@ namespace Shiftwise52cards.mvc.App.Tests.Unit_Test
             Assert.IsFalse(caught);  //exception
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result, typeof(ViewResult));
-            Assert.AreEqual(result.ViewEngineCollection.Count, 2);
+            Assert.AreEqual(2, result.ViewEngineCollection.Count);
             //Assert.AreEqual("_52card", result.ViewData["Title"]);
         }
 

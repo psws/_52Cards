@@ -103,15 +103,15 @@ namespace Shiftwise52cards.mvc.App.Tests.Unit_Test.Services
             // Assert
             Assert.IsFalse(caught);  //exception
             Assert.IsNotNull(CardElementDTO_Out);
-            Assert.AreEqual(CardElementDTO_Out.Count, CardElementDTOCount);
+            Assert.AreEqual(CardElementDTOCount, CardElementDTO_Out.Count);
             foreach (var item in CardElementDTO_Out)
             { // check for cards (No Sorting in Service)
                 //find DeckId in expected
                 CardElementDTO CardElementDTO = CardElementDTOsExpected.Where(x => x.DeckId == item.DeckId).FirstOrDefault();
                 Assert.IsNotNull(CardElementDTO);
-                Assert.AreEqual(item.DeckId, CardElementDTO.DeckId);
-                Assert.AreEqual(item.CardSuitEnum, CardElementDTO.CardSuitEnum);
-                Assert.AreEqual(item.Value, CardElementDTO.Value);
+                Assert.AreEqual(CardElementDTO.DeckId, item.DeckId);
+                Assert.AreEqual(CardElementDTO.CardSuitEnum, item.CardSuitEnum);
+                Assert.AreEqual(CardElementDTO.Value, item.Value);
             }
 
         }
@@ -170,15 +170,15 @@ namespace Shiftwise52cards.mvc.App.Tests.Unit_Test.Services
             // Assert
             Assert.IsFalse(caught);  //exception
             Assert.IsNotNull(CardElementDTO_Out);
-            Assert.AreEqual(CardElementDTO_Out.Count, CardElementDTOCount);
+            Assert.AreEqual(CardElementDTOCount, CardElementDTO_Out.Count);
             foreach (var item in CardElementDTO_Out)
             { // check for cards (No Sorting in Service)
                 //find DeckId in expected
                 CardElementDTO CardElementDTO = CardElementDTOsExpected.Where(x => x.DeckId == item.DeckId).FirstOrDefault();
                 Assert.IsNotNull(CardElementDTO);
-                Assert.AreEqual(item.DeckId, CardElementDTO.DeckId);
-                Assert.AreEqual(item.CardSuitEnum, CardElementDTO.CardSuitEnum);
-                Assert.AreEqual(item.Value, CardElementDTO.Value);
+                Assert.AreEqual(CardElementDTO.DeckId, item.DeckId);
+                Assert.AreEqual(CardElementDTO.CardSuitEnum, item.CardSuitEnum);
+                Assert.AreEqual(CardElementDTO.Value, item.Value);
             }
 
         }
@@ -235,15 +235,15 @@ namespace Shiftwise52cards.mvc.App.Tests.Unit_Test.Services
             // Assert
             Assert.IsFalse(caught);  //exception
             Assert.IsNotNull(CardElementDTO_Out);
-            Assert.AreEqual(CardElementDTO_Out.Count, 0); //no cards were submitted
+            Assert.AreEqual(0, CardElementDTO_Out.Count); //no cards were submitted
             foreach (var item in CardElementDTO_Out)
             { // check for cards  No Shuffling in Service
                 //find DeckId in expected
                 CardElementDTO CardElementDTO = CardElementDTOsExpected.Where(x => x.DeckId == item.DeckId).FirstOrDefault();
                 Assert.IsNotNull(CardElementDTO);
-                Assert.AreEqual(item.DeckId, CardElementDTO.DeckId);
-                Assert.AreEqual(item.CardSuitEnum, CardElementDTO.CardSuitEnum);
-                Assert.AreEqual(item.Value, CardElementDTO.Value);
+                Assert.AreEqual(CardElementDTO.DeckId, item.DeckId);
+                Assert.AreEqual(CardElementDTO.CardSuitEnum, item.CardSuitEnum);
+                Assert.AreEqual(CardElementDTO.Value, item.Value);
             }
 
         }
@@ -302,15 +302,15 @@ namespace Shiftwise52cards.mvc.App.Tests.Unit_Test.Services
             // Assert
             Assert.IsFalse(caught);  //exception
             Assert.IsNotNull(CardElementDTO_Out);
-            Assert.AreEqual(CardElementDTO_Out.Count, CardElementDTOCount); //no cards were submitted
+            Assert.AreEqual(CardElementDTOCount, CardElementDTO_Out.Count);
             foreach (var item in CardElementDTO_Out)
             { // check for cards  No Shuffling in Service
                 //find DeckId in expected
                 CardElementDTO CardElementDTO = CardElementDTOsExpected.Where(x => x.DeckId == item.DeckId).FirstOrDefault();
                 Assert.IsNotNull(CardElementDTO);
-                Assert.AreEqual(item.DeckId, CardElementDTO.DeckId);
-                Assert.AreEqual(item.CardSuitEnum, CardElementDTO.CardSuitEnum);
-                Assert.AreEqual(item.Value, CardElementDTO.Value);
+                Assert.AreEqual(CardElementDTO.DeckId, item.DeckId);
+                Assert.AreEqual(CardElementDTO.CardSuitEnum, item.CardSuitEnum);
+                Assert.AreEqual(CardElementDTO.Value, item.Value);
             }
 
         }
