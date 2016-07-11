@@ -48,6 +48,9 @@ namespace Shiftwise52cards.mvc.App.Tests.Unit_Test
                 new CardElementDTO {DeckId= "King_Spade", Value=13, CardSuitEnum = CardSuitEnum.SPADE},
                 new CardElementDTO {DeckId= "Queen_Spade", Value=12, CardSuitEnum = CardSuitEnum.SPADE},
                 };
+            //ascending order
+            CardElementDTOsExpected = CardElementDTOsExpected.OrderBy(x => x.Value);
+            
             DataCardInfoDtoIn = new DataCardInfoDto()
             {
                 Game = "Bridge"
@@ -59,7 +62,7 @@ namespace Shiftwise52cards.mvc.App.Tests.Unit_Test
             A.CallTo(() => ICardService.SortCards(DataCardInfoDtoIn, username))
                .Returns(Task<IEnumerable<CardElementDTO>>.FromResult(CardElementDTOsExpected));
 
-            CardElementDTOCount = (CardElementDTOsExpected as List<CardElementDTO>).Count;
+            CardElementDTOCount = CardElementDTOsExpected.Count();
             //A.CallTo(() =>  ICardService.SortCards(DataCardInfoDtoIn, username))
             //    .Returns(new List<CardElementDTO>()
             //    {
@@ -97,10 +100,13 @@ namespace Shiftwise52cards.mvc.App.Tests.Unit_Test
             Assert.IsFalse(caught);  //exception
             Assert.IsNotNull(CardElementDTO_Out);
             Assert.AreEqual(CardElementDTOCount, CardElementDTO_Out.Count);
+            int index = 0;
             foreach (var item in CardElementDTO_Out)
             { // check for cards (the Data Controller does no sorting)
                 //find DeckId in expected
-                CardElementDTO CardElementDTO = CardElementDTOsExpected.Where(x => x.DeckId == item.DeckId).FirstOrDefault();
+                CardElementDTO CardElementDTO = CardElementDTOsExpected.ElementAt(index);
+                index++;
+
                 Assert.IsNotNull(CardElementDTO);
                 Assert.AreEqual(CardElementDTO.DeckId, item.DeckId);
                 Assert.AreEqual(CardElementDTO.CardSuitEnum, item.CardSuitEnum);
@@ -119,6 +125,9 @@ namespace Shiftwise52cards.mvc.App.Tests.Unit_Test
                 new CardElementDTO {DeckId= "King_Spade", Value=13, CardSuitEnum = CardSuitEnum.SPADE},
                 new CardElementDTO {DeckId= "Queen_Spade", Value=12, CardSuitEnum = CardSuitEnum.SPADE},
                 };
+            //ascending order
+            CardElementDTOsExpected = CardElementDTOsExpected.OrderBy(x => x.Value);
+            
             DataCardInfoDtoIn = new DataCardInfoDto()
             {
                 Game = "Bridge",
@@ -130,7 +139,7 @@ namespace Shiftwise52cards.mvc.App.Tests.Unit_Test
             A.CallTo(() => ICardService.SortCards(DataCardInfoDtoIn, username))
                .Returns(Task<IEnumerable<CardElementDTO>>.FromResult(CardElementDTOsExpected));
 
-            CardElementDTOCount = (CardElementDTOsExpected as List<CardElementDTO>).Count;
+            CardElementDTOCount = CardElementDTOsExpected.Count();
 
 
             bool caught = false;
@@ -161,10 +170,12 @@ namespace Shiftwise52cards.mvc.App.Tests.Unit_Test
             Assert.IsFalse(caught);  //exception
             Assert.IsNotNull(CardElementDTO_Out);
             Assert.AreEqual(CardElementDTOCount, CardElementDTO_Out.Count);
+            int index = 0;
             foreach (var item in CardElementDTO_Out)
             { // check for cards (the Data Controller does no sorting)
                 //find DeckId in expected
-                CardElementDTO CardElementDTO = CardElementDTOsExpected.Where(x => x.DeckId == item.DeckId).FirstOrDefault();
+                CardElementDTO CardElementDTO = CardElementDTOsExpected.ElementAt(index);
+                index++;
                 Assert.IsNotNull(CardElementDTO);
                 Assert.AreEqual(CardElementDTO.DeckId, item.DeckId);
                 Assert.AreEqual(CardElementDTO.CardSuitEnum, item.CardSuitEnum);

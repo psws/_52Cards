@@ -5,6 +5,10 @@
     // Fetch the initial data.
     //var controlUri = '/api/control/';
     var bodyContainer = $("#CardListPanel");
+    if (bodyContainer.length  == 0) {
+        bodyContainer = $("div.body-content ");
+    }
+
     var updateProgressDiv = $("#updateProgressDiv");
     var tmp = bodyContainer.width();
     var position = bodyContainer.offset();

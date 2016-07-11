@@ -47,24 +47,68 @@ namespace Shiftwise._52cards.mvc.repository
 
         public async Task<IEnumerable<CardElementDTO>> GetShuffledCards(DataCardInfoDto DataCardInfoDto, string username)
         {
+            //A deck is Shuffled when:
+            //      No  sequences of adjacent cards Ascending
+            bool bDone = false;
             IEnumerable<CardElementDTO> CardElementDTOs = null;
             if (DataCardInfoDto.CardElementDTOs != null && DataCardInfoDto.CardElementDTOs.Length > 0)
             { //Sort deck in function Parameter
- 
+                //The Shuffle
+                while (bDone == false)
+                {
+                    
 #if false
-                //https://blog.codinghorror.com/shuffling/
-                //CardElementDTOs = DataCardInfoDto.CardElementDTOs.OrderBy(a => Guid.NewGuid());
+                    //https://blog.codinghorror.com/shuffling/
+                    //CardElementDTOs = DataCardInfoDto.CardElementDTOs.OrderBy(a => Guid.NewGuid());
 #else
-                //or Fisher-Yates
-                //http://stackoverflow.com/questions/273313/randomize-a-listt/1262619#1262619
-                Random rnd1 = new Random();
-                DataCardInfoDto.CardElementDTOs.Shuffle(rnd1);
+                    //or Fisher-Yates
+                    //http://stackoverflow.com/questions/273313/randomize-a-listt/1262619#1262619
+                    Random rnd1 = new Random();
+                    DataCardInfoDto.CardElementDTOs.Shuffle(rnd1);
+
+                    Dictionary<int, int> resultDictionary = new Dictionary<int, int>();
+                    int runLength = 1;
+                    int startingNumber = DataCardInfoDto.CardElementDTOs[0].Value;
+                    int maxrunLength = 0;
+
+                    for (int m = 1; m < DataCardInfoDto.CardElementDTOs.Count(); m++)
+                    {
+                        var number = DataCardInfoDto.CardElementDTOs[m].Value;
+                        var previousNumber = DataCardInfoDto.CardElementDTOs[m - 1].Value;
+                        if (number - previousNumber == 1) //ascending
+                        {
+                            runLength++;
+                        }
+                        else
+                        {
+                            if (runLength != 1)
+                            {
+                                maxrunLength = (runLength > maxrunLength)?runLength : maxrunLength;  
+                                resultDictionary.Add(startingNumber, runLength);
+                            }
+
+                            runLength = 1;
+                            startingNumber = number;
+                        }
+                    }
+                    if (runLength >1)
+                    { //Last sequence in list has 2 or more adjacent cards
+                        resultDictionary.Add(startingNumber, runLength);
+                    }
+                    if (resultDictionary.Count() == 0)  //Shuffle rule
+                    {
+                        bDone = true;
+                    }
+
+#endif
+                }
                 CardElementDTOs = new List<CardElementDTO>();
                 CardElementDTOs = DataCardInfoDto.CardElementDTOs;
-#endif
             }
             return CardElementDTOs;
         }
+
+
 
         private bool disposed = false;
 

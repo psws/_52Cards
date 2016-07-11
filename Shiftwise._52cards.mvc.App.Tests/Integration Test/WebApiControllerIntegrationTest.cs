@@ -166,7 +166,7 @@ namespace Shiftwise52cards.mvc.App.Tests.Unit_Test.Repositories
                 Assert.AreEqual(4, CardElementDTO_Out.DistinctBy(x => x.CardSuitEnum).Count());
                 Assert.AreEqual(CardElementDTO_Out.Count, CardElementDTO_Out.DistinctBy(x => x.Value).Count());
                 //check first card
-                Assert.AreEqual(CardElementDTO_Out[0].DeckId, "Ace_Spade");
+                Assert.AreEqual(CardElementDTO_Out[0].DeckId, "2_Club");
                 
                 //https://www.devtxt.com/blog/checking-whether-list-numbers-are-sequential-using-linq
                 //does adeep compare
@@ -178,6 +178,7 @@ namespace Shiftwise52cards.mvc.App.Tests.Unit_Test.Repositories
                     { // check for cards (the real Repository does  sorting)
                         //CardElementDTO_Out order should match CardElementDTOsExpected
                         CardElementDTO CardElementDTO = CardElementDTOsExpected.ElementAt(index);
+                        index++;
 
                         if (CardElementDTO == null)
                         {
@@ -308,6 +309,8 @@ namespace Shiftwise52cards.mvc.App.Tests.Unit_Test.Repositories
                     //check shuffle quality.  No adjacent card Values
                     int runLength = 1;
                     int startingNumber = CardElementDTO_Out[0].Value;
+                    int maxrunLength = 0;
+
                     Dictionary<int, int> result = null;
 
                     List<int> resultValue = new List<int>();
@@ -321,7 +324,7 @@ namespace Shiftwise52cards.mvc.App.Tests.Unit_Test.Repositories
                     {
                         var number = CardElementDTO_Out[m].Value;
                         var previousNumber = CardElementDTO_Out[m - 1].Value;
-                        if (previousNumber - number == 1) //descebding
+                        if (number - previousNumber == 1) //ascending
                         {
                             runLength++;
                         }
@@ -329,6 +332,7 @@ namespace Shiftwise52cards.mvc.App.Tests.Unit_Test.Repositories
                         {
                             if (runLength != 1)
                             {
+                                maxrunLength = (runLength > maxrunLength)?runLength : maxrunLength;  
                                 result.Add(startingNumber, runLength);
                                 TestContext.WriteLine(
                                 string.Format("Error: runLength is > 1 for startingNumber {0}", startingNumber));
@@ -338,9 +342,13 @@ namespace Shiftwise52cards.mvc.App.Tests.Unit_Test.Repositories
                             startingNumber = number;
                         }
                     }
-                    if (result.Count >=1)
-	                {
-                        Assert.Inconclusive("The shuffled deck has {0} adjacent card sequencse", result.Count);
+                    if (runLength > 1)
+                    { //Last sequence in list has 2 or more adjacent cards
+                        result.Add(startingNumber, runLength);
+                    }
+                    if (result.Count() != 0) // || maxrunLength >= 3)  //Shuffle rule
+                    {
+                        Assert.Inconclusive("Shuffle Violation: The shuffled deck has {0} adjacent card sequencse and the Maximun sequence length is {1}", result.Count,maxrunLength );
 	                }
 
                 }
