@@ -21,15 +21,16 @@
 	}
 
 setup configuration string in web.config
-    <add name="_52CardDatabase" connectionString="Data Source=(LocalDb)\v11.0;AttachDbFilename=|DataDirectory|\_52CardDatabase.mdf;Integrated Security=True" providerName="System.Data.SqlClient" />
+    <add name="_52CardSQLExpress2012" connectionString="Data Source=(LocalDb)\v11.0;AttachDbFilename=|DataDirectory|\_52Cards.mdf;Integrated Security=True" providerName="System.Data.SqlClient" />
+    <add name="_52CardSQLExpress2014" connectionString="Data Source=(localdb)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\_52Cards.mdf;Integrated Security=True" providerName="System.Data.SqlClient" />
+or add for different DB
 
-
-	NOTE: Make sure your class derives from LogDataDB : DbContext
-create this file in the same namespace as the model classes (Logqso.mvc.DataModel):
-	 namespace Logqso.mvc.DataModel
+	NOTE: Make sure your class derives from _52CardsDB : DbContext
+create this file in the same namespace as the model classes (Shiftwise._52cards.mvc.DataModel):
+namespace Shiftwise._52cards.mvc.DataModel
 	{
 	// https://msdn.microsoft.com/en-us/data/jj591621.aspx#model
-		public class LogDataDB : DbContext
+    public class _52CardsDB : DbContext
     {
 
         public _52CardsDB()
@@ -58,148 +59,21 @@ create this file in the same namespace as the model classes (Logqso.mvc.DataMode
  
 
 Then run this command in the pm
- PM> Enable-Migrations -Force -ProjectName Shiftwise._52cards.mvc.DataModel -StartupProjectName Shiftwise._52cards.mvc.App -ContextTypeName Shiftwise._52cards.mvc.DataModel._52CardsDataDB -MigrationsDirectory Migrations\LogDataDB
-
-Package Model Console output
-PM> Enable-Migrations -Force -ProjectName Logqso.mvc.DataModel -StartupProjectName Logqso.mvc.ui -ContextTypeName Logqso.mvc.DataModel.LogData.LogDataDB -MigrationsDirectory LogData\Migrations\LogDataDB
-Checking if the context targets an existing database...
-Code First Migrations enabled for project Logqso.mvc.DataModel.
-Next do the Add-Migration Seed dasta in the configuration.cs filel.LogData.Migrations.LogDataDB.Configuration "InitialDatabaseCreation" 
-
+PM> Enable-Migrations -Force -ProjectName Shiftwise._52cards.mvc.DataModel -StartupProjectName Shiftwise._52cards.mvc.App -ContextTypeName Shiftwise._52cards.mvc.DataModel._52CardsDB -MigrationsDirectory Migrations\_52CardsDB
 
 Next do the Add-Migration
 
-PM> Add-Migration -ProjectName Logqso.mvc.DataModel -Force -StartupProjectName Logqso.mvc.ui -ConfigurationTypeName Logqso.mvc.DataModel.LogData.Migrations.LogDataDB.Configuration "InitialDatabaseCreation" 
+PM> Add-Migration -ProjectName Shiftwise._52cards.mvc.DataModel -Force -StartupProjectName Shiftwise._52cards.mvc.App -ConfigurationTypeName Shiftwise._52cards.mvc.DataModel.Migrations._52CardsDB.Configuration "InitialDatabaseCreation" 
 
-The Designer Code for this migration file includes a snapshot of your current Code First model. This snapshot is used to calculate the changes to your model when you scaffold the next migration. 
-If you make additional changes to your model that you want to include in this migration, then you can re-scaffold it by running 'Add-Migration InitialDatabaseCreation' again.
-next create tables in DB
 
 NEXT:
 Add any seed data in the configuration.cs file
-            QsoModeTypeSeeds.SeedContest(context);
-            QsoExchangeTypeSeeds.SeedContest(context);
-            ContestTypeSeeds.SeedContest(context);
-            QsoRadioTypeSeeds.SeedContest(context);
-            CabrilloInfoSeeds.SeedContest(context);
-            CallSignSeeds.SeedContest(context);
-            ContestSeeds.SeedContest(context);
-            LogCategorySeeds.SeedContest(context);
-            LogSeeds.SeedContest(context);
-            StationSeeds.SeedContest(context);
-            SessionSeeds.SeedContest(context);
-            CallInfoSeeds.SeedContest(context);
-			 QsoExchangeNumberSeeds.SeedQsoExchangeNumber(context);
+                   DeckSeeds.SeedContest(context);
+                   RowSeeds.SeedContest(context);
 
-#if DEBUG
-            QsoSeeds.SeedContest(context);
-#endif
-=====================================
-THIS STEP NOT REQUIREDALSO Before Updating DB
-this was avoided by doing 
-	         modelBuilder.Entity<LogData.DataModels.Log>().HasMany(p => p.Qsoes)
-            .WithRequired().HasForeignKey(c => c.LogId).WillCascadeOnDelete(false);
-in the LogDataDB.cs file OnModelCreating() method
-//http://stackoverflow.com/questions/9136255/ef4-1-code-first-how-to-disable-delete-cascade-for-a-relationship-without-navi
-=====================================
-We cannot set QSO.Logid to 'NoAction' on delete.
-The code in LogDataDB is not able to set false without creating Log navidation property and another Log_LogID FK in QSO table.
-I go not know what is causing this, maybe a bug.
-We have to block Cascading deletes by:
-so Do the falling in the generated file from the Add-Migrations  step   201605202329369_InitialDatabaseCreation Migration file
-	change the    .ForeignKey("dbo.Log", t => t.LogId, cascadeDelete: true)
-    to            .ForeignKey("dbo.Log", t => t.LogId, cascadeDelete: false)
+PM>Update-Database -Force -ProjectName Shiftwise._52cards.mvc.DataModel -StartupProjectName Shiftwise._52cards.mvc.App -ConfigurationTypeName Shiftwise._52cards.mvc.DataModel.Migrations._52CardsDB.Configuration -Verbose -ConnectionStringName "_52CardSQLExpress2012"
 
-		 CreateTable(
-						"dbo.Qso",
-						c => new
-							{
-								QsoNo = c.Short(nullable: false),
-								LogId = c.Int(nullable: false),
-								StationName = c.String(maxLength: 20, unicode: false),
-								Frequency = c.Decimal(nullable: false, precision: 18, scale: 2),
-								CallsignId = c.Int(nullable: false),
-								QsoDateTime = c.DateTime(nullable: false),
-								RxRst = c.Short(nullable: false),
-								TxRst = c.Short(nullable: false),
-								QsoExchangeNumber = c.Short(),
-								QsoModeTypeEnum = c.Int(nullable: false),
-								QsoRadioTypeEnum = c.Int(nullable: false),
-							})
-						.PrimaryKey(t => new { t.QsoNo, t.LogId })
-						.ForeignKey("dbo.CallSign", t => t.CallsignId)
-						.ForeignKey("dbo.QsoModeType", t => t.QsoModeTypeEnum, cascadeDelete: true)
-						.ForeignKey("dbo.QsoRadioType", t => t.QsoRadioTypeEnum, cascadeDelete: true)
-						.ForeignKey("dbo.Station", t => new { t.LogId, t.StationName })
-						.ForeignKey("dbo.Log", t => t.LogId, cascadeDelete: false)
-						.Index(t => new { t.LogId, t.StationName })
-						.Index(t => t.CallsignId)
-						.Index(t => t.QsoModeTypeEnum)
-						.Index(t => t.QsoRadioTypeEnum);
-==================================================================
-
-PM>Update-Database -Force -ProjectName Logqso.mvc.DataModel -StartupProjectName Logqso.mvc.ui -ConfigurationTypeName Logqso.mvc.DataModel.LogData.Migrations.LogDataDB.Configuration -Verbose -ConnectionStringName "LogDataDB"
-
-Package Model Console output
-PM> Update-Database -ProjectName Logqso.mvc.DataModel -StartupProjectName Logqso.mvc.ui -ConfigurationTypeName Logqso.mvc.DataModel.LogData.Migrations.LogDataDB.Configuration -Verbose -ConnectionStringName "LogDataDB"
-Using StartUp project 'Logqso.mvc.ui'.
-Specify the '-Verbose' flag to view the SQL statements being applied to the target database.
-Target database is: 'ConrestqsoData' (DataSource: PSS60\SQL2014, Provider: System.Data.SqlClient, Origin: Explicit).
-Applying explicit migrations: [201507270650382_InitialDatabaseCreation].
-Applying explicit migration: 201507270650382_InitialDatabaseCreation.
-CREATE TABLE [dbo].[CallSign] (
-    [CallSignId] [int] NOT NULL IDENTITY,
-    [Call] [varchar](20) NOT NULL,
-    [Continent] [int] NOT NULL,
-    CONSTRAINT [PK_dbo.CallSign] PRIMARY KEY ([CallSignId])
-)
-CREATE TABLE [dbo].[Contest] (
-    [ContestId] [int] NOT NULL IDENTITY,
-    [ContestName] [nvarchar](30),
-    CONSTRAINT [PK_dbo.Contest] PRIMARY KEY ([ContestId])
-)
-CREATE TABLE [dbo].[Log] (
-    [LogId] [int] NOT NULL IDENTITY,
-    [ContestYear] [datetime] NOT NULL,
-    [ContestId] [int] NOT NULL,
-    CONSTRAINT [PK_dbo.Log] PRIMARY KEY ([LogId])
-)
-CREATE INDEX [IX_ContestId] ON [dbo].[Log]([ContestId])
-CREATE TABLE [dbo].[Qso] (
-    [QsoId] [int] NOT NULL IDENTITY,
-    [LogId] [int] NOT NULL,
-    [CallsignId] [int] NOT NULL,
-    [QsoDateEime] [datetime] NOT NULL,
-    [RxRst] [smallint] NOT NULL,
-    [TxRst] [smallint] NOT NULL,
-    CONSTRAINT [PK_dbo.Qso] PRIMARY KEY ([QsoId])
-)
-CREATE INDEX [IX_LogId] ON [dbo].[Qso]([LogId])
-CREATE INDEX [IX_CallsignId] ON [dbo].[Qso]([CallsignId])
-ALTER TABLE [dbo].[Log] ADD CONSTRAINT [FK_dbo.Log_dbo.Contest_ContestId] FOREIGN KEY ([ContestId]) REFERENCES [dbo].[Contest] ([ContestId]) ON DELETE CASCADE
-ALTER TABLE [dbo].[Qso] ADD CONSTRAINT [FK_dbo.Qso_dbo.CallSign_CallsignId] FOREIGN KEY ([CallsignId]) REFERENCES [dbo].[CallSign] ([CallSignId]) ON DELETE CASCADE
-ALTER TABLE [dbo].[Qso] ADD CONSTRAINT [FK_dbo.Qso_dbo.Log_LogId] FOREIGN KEY ([LogId]) REFERENCES [dbo].[Log] ([LogId]) ON DELETE CASCADE
-CREATE TABLE [dbo].[__MigrationHistory] (
-    [MigrationId] [nvarchar](150) NOT NULL,
-    [ContextKey] [nvarchar](300) NOT NULL,
-    [Model] [varbinary](max) NOT NULL,
-    [ProductVersion] [nvarchar](32) NOT NULL,
-    CONSTRAINT [PK_dbo.__MigrationHistory] PRIMARY KEY ([MigrationId], [ContextKey])
-)
-INSERT [dbo].[__MigrationHistory]([MigrationId], [ContextKey], [Model], [ProductVersion])
-VALUES (N'201507270650382_InitialDatabaseCreation', N'Logqso.mvc.DataModel.LogData.Migrations.LogDataDB.Configuration',  0x1F8B0800000000000400DD5BDB6EE336107D2FD07F10F4586CAD5C5AA00DEC5D649DA430BA49B691B3689F0246A21DA114A515A92046D12FEB433FA9BFD0A12ED485D4D58E935DECC3462467389C399C1972E8FFFEF977FAEEC927C6238E9817D099793839300D4C9DC0F5E87A66C67CF5FD4FE6BBB7DF7E333D77FD27E3533EEE588C034ACA66E603E7E1896531E701FB884D7CCF890216ACF8C4097C0BB981757470F0B3757868616061022FC398DEC4947B3E4E3EE0731E5007873C46E432703161593BF4D80957E30AF99885C8C133F343B0FECC8289FFE84CCE104709C1041AC587699C120F814C36262BD34094061C7190F8E496619B47015DDB213420B2DC8418C6AD1061385BC94931BCEFA20E8EC4A2AC823067E5C48C07FE408687C79996AC3AF9285D9B528BA0C773D037DF885527BA9C99734488EDAD81757DB2933989C4C076554F72066F0CDDB037122B0029F1EF8D318F098F233CA338E61182111FE37BE239BFE2CD32F813D3198D0929CB0C52435FA5019A3E46418823BEB9C1ABDA4A16AE6958557AABCE40926B68D3352F283F3E328D2B1006DD132C2152D28FCD8308FF82298E10C7EE47C4398EC0C20B17274A56A4D0CC99CF0698848D661A97E8E903A66BFE30338F60675D784FD8CD1B32016EA907DB12687814638D801D9306201B0501E5CCB04326A5D6567E53ABC04F3BAA8021667C3CA852FA97C7542AC7284815A47B43543AA5F86801D6713F608DB23B986BB4CDE1FF17B7374C3FC6D619D99EEDFC0746513E29280B2F3D7F9C43E805D31A9B2BF4E8AD93D5E8199AC60D26493F7BF0C2CCCF809EEE64FF4514F8370149D59737DFD9411C3902BE81DAB744D11AF391D0FC8D05A3A109B42F0E4D90610C3433B27D41B3D74EE88E8BAC572C6EE7032B17BBE2DC2BBCE1E85D72F374C364C87CBFE1C3392C877368DE623267D3EC3158F65D31A0D864E5766597553A75DBAC4D9CC4E9374892F45585103B5A37BF681FB6C363BF96726439CC825D10B42ED2FA5EBB1E32673FA013C1B5C8872ABB3E1D3176CB437C75714436108ECBA8AEEAF812FBF738CA5674756A1A9F1089E1CF03C51A95917631F2B07DE4F9AD1C79D43EF2D496238F3B465EC8913FB48FBC9ECB913FAA464ECD596E3C652C70BCC46605D66404A94E744E5DA3259C14C96E02C94B3099178291005833F33B456C3DB71C9EB5D4390967558E8766DDA35FD3334C30C7C6A9939E04E78839C855B73D68C2ADB64010C091F0BF88C0740C30E651AE460C8F3A5E8848B3DC35926119AF904CCE51EF39C321A62244349B60EBC9E51C35757569676A9560D48EAE8AEF6C0284DE91168848128DFEF8D2BADE32C0A42F7F6D08D349DECBCA8D07F54118D3D9A1EFF4AC71FA3DA14C38A136445482E456D82A87D5762FF83A105592B78F35B527B6C1382AA97BAB49778E9E34F5117E1128641CCDCE2567EF35B9CD2DC3597AC3B2A37C1D1D82A38DB9924C166996E27A1484D578E441506591F7747048E0A85027AD1D94C996502893D61A6549C595898B23696984E6C45AB7767BC621E5CC16A780A53DC5289137E9D0AA2EA8C762AB670375B5CDF1AF3B029604D628BF3BE49517DC84BB712B4ED4AF5FACE2865B1DF1C025963D6F3B1A5A16969F7EA40B286A22565A14C98B275643F5647A89C2104E1DA56A4AD662D8692965FEBD3DBCB2E0A73C2C87690A0C525A39130F22B4C6B55E816D175F7811E3C29FDD23715A9BBBBE32AC70780DCE209FA7E6D35403E57E2227107F4B4FD05DE5D084878CD305ACCF175125B941D1A159214DEA5A88A0A8A51A310F48ECD3EEC4A99D9BCA671087E2685D615334ABBCA6564D2F4AAC546CA1A41455DBF6B37CA3AF1E6B783DC33E766FA26C537376FAA9ABB9E150D4C92B2D0568B8A51DAFC66C7A3F3CD2641A663DCCA5A56A526F96009615DB9013769A28BDC5D79828ED18CC6F107C5EC8DC227AEECCDC1A663DCCADA56A526D76895E56ABF63AFED921533ABAD61D7AD391B67555C505796D6D45477F7ED925799953D6D49FC752E5B16CE2F1ACE055F2AEFA1039BBCCBF6A79D634CB79BA9FB22849503AC43440398F9E2B12207BC338F613F44FECCF644EBC24EEE6032E11F556B0CBD3FB66F3E8E0F0A8F606E6F5BC47B11873892667D43D4AA9DAEB059E817842CB9D35B11115AE7C824714390FC2D1D79E7E6CFBAEC3DBFD638E31C6D8E1FB89E73185FA6482EA4C725C31C9962F24462872170F139E5381E5B7082E70E63B798B9048ACDC702DA88B9F66E65F09D589B1F8FD4E12BE31AE23708727C681F1F7AEE0AF640AFBABD73F8BC5544CF4D070423440BB7AA7C754DFDAC7BA92722B0134EF014623B5F21E001CEFA6DBDDAA4C96C3993481765CA1545E2CEEB99E59B9F91C5E9B1D555A683EC73F630DF4EB297A1657B2FB2E4D56EE548717C3C681A5F9B6EF39CB995F47F9B2C79EFEE201D2776FEFA43AF9459424D58BFC869BA02165C7F41C0C71FA5E18368D8ABB2C4A6AF96F5FB1D4B1DDB294A963B9DF1A674D9D6D9549D51D8C2E7F352D694795CC3A0A5BCB8FAAAF692F08EEBB5CD943D33B5CC280C2A47A1106EEA7F4CB2F707A22A24916E27760143B15C723C72CE82AC8DD5F4DA27C482DCFBEC41C41A68F4E23EEAD90C3A1DBC18C25BF8BC85E239EFBF7D85DD0EB988731872563FF9E54DE3A0B3FDA367F527DADCA3CBD0E9307B1BB580288E989C3CA357D1F7BC495725F688E080D2C8483CE4E91C2965C9C26D71BC9E92AA03D1965EA93716589FD900033764D6DF488C7C876CBF007BC46CE26BFCF6C66D26D88AADAA7671E5A47C867198F821E3E01C3AEFFF4F67F3F5EFA6900390000 , N'6.1.3-40302')
-
-Running Seed method.
-PM>
-
-
-=======
-NOTE
-======
-EF codefirst migrattiom always creates Indexs for all FK table memners
-	CREATE INDEX [IX_LogId] ON [dbo].[Qso]([LogId])
-	CREATE INDEX [IX_CallsignId] ON [dbo].[Qso]([CallsignId])
-
+The mdf file will be created in the  Shiftwise._52cards.mvc.App\AppData directory
 
 
 

@@ -1,11 +1,10 @@
-﻿Using installed extendion Microsoft entity power toos beta 4
-right click on Logqsomvc.DataModel project
+﻿Using installed extendion Microsoft entity power tools beta 4
+right click on Shiftwise._52cards.mvc.DataModel project
 select entity framework select reverse engineer code first
-set server to PSS60\SQL2014
+set server to (LocalDb)\v11.0
 Set sql sever account radio button
-enter User anme jims9m8r
-enter password jims9m8r
-select a database name = ContestqsoData
+	Use User Authentication
+select a database name = _52Cards
 Click advanced tab
 go to  Security section
 Check persist security informatin = true

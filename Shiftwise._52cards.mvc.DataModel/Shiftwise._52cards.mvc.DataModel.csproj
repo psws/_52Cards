@@ -75,18 +75,25 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\_52Cards.mdf" />
-    <Content Include="App_Data\_52Cards_log.ldf">
-      <DependentUpon>_52Cards.mdf</DependentUpon>
-    </Content>
     <Content Include="App_Note\DataModel code first database setup.txt" />
     <Content Include="App_Note\Reverse Engineer and Update Data entities.txt" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DeckSeeds.cs" />
+    <Compile Include="Migrations\_52CardsDB\201607110742475_InitialDatabaseCreation.cs" />
+    <Compile Include="Migrations\_52CardsDB\201607110742475_InitialDatabaseCreation.Designer.cs">
+      <DependentUpon>201607110742475_InitialDatabaseCreation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\_52CardsDB\201607111628366_RuleValuechange.cs" />
+    <Compile Include="Migrations\_52CardsDB\201607111628366_RuleValuechange.Designer.cs">
+      <DependentUpon>201607111628366_RuleValuechange.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\_52CardsDB\Configuration.cs" />
     <Compile Include="Rule.cs" />
     <Compile Include="Deck.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RuleSeeds.cs" />
     <Compile Include="_52CardsDataDB.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -95,12 +102,22 @@
       <Name>Shiftwise._52cards.mvc.common</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\_52CardsDB\201607110742475_InitialDatabaseCreation.resx">
+      <DependentUpon>201607110742475_InitialDatabaseCreation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\_52CardsDB\201607111628366_RuleValuechange.resx">
+      <DependentUpon>201607111628366_RuleValuechange.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugNoDB|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugSQL2012|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -109,7 +126,25 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseNoDB|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugSQL2014|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release SQl2012|AnyCPU'">
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseSQL2014|AnyCPU'">
     <OutputPath>bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>

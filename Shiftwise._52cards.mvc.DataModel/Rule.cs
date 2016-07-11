@@ -19,7 +19,7 @@ namespace Shiftwise._52cards.mvc.DataModel
         [MaxLength(35)]
         [Required]
         public string GameName { get; set; }
-        public short value { get; set; }
+        public short Value { get; set; }
         //FK
         public virtual Deck Deck { get; set; }
 
