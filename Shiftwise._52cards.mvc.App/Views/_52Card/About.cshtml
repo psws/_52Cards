@@ -5,21 +5,57 @@
 <h3>@ViewBag.Message</h3>
 
 <p>Author James Sullivan, 503-828-1070</p>
-<p>
+
+
     This _52Card application; <br />
-    <span style="font-weight:bold; color:brown;">UI: JavaScript,Jquery, Bootstrap, Responsive</span><br />
-    <span style="font-weight:bold; color:brown;">Server: MVC, WebApi, MEF Dependnecy Injection</span><br />
-    <span style="font-weight:bold; color:brown;">Backend: Bridge List in the repository or a SQl database</span><br />
-    <span style="font-weight:bold; color:brown;">Test: Visual Studio Test Explorer, 14 unit tests, 4 Integration Tests</span><br />
-    
+    <div style="padding-left: 50px;">
+        <span style="font-weight:bold; color:brown; padding-right: 60px">UI:</span> JavaScript,Jquery, Bootstrap, Responsive<br />
+        <span style="font-weight:bold; color:brown; padding-right: 30px">Server:</span>  MVC, WebApi, MEF Dependnecy Injection<br />
+        <span style="font-weight:bold; color:brown; padding-right: 10px">Backend:</span> Three possibilities<br />
+        <div style="padding-left: 80px;">
+            <span style="font-weight:bold; color:purple;">
+            Bridge List in the repository(Debug build)<br />
+            SQl2012(Debug2012 build)<br />
+            SQL2014(Debug2014 build) <br />
+            </span>
+       </div>
+        <span style="font-weight:bold; color:brown; padding-right: 30px">Testing:</span> Visual Studio Test Explorer, 14 Unit tests, 4 Integration Tests<br />
+    </div>
+    <br />
     The application can be accessed at <span style="font-weight:bold"> <a href="http://pswsweb.com">http://pswsweb.com/</a></span><br />
-</p>
 <p>
-    This application source code is available on: <span style="font-weight:bold">
+    The application is built with Microdoft Visual Studio 2013<br />
+    The application Solution <span style="color:green; font-style :italic;font-weight:bold">Shiftwise._52cards.sln</span> contains  10 Visual Studio projects<br />
+    Each project's responsibility was guided by the Separation of Concerns (SOC) principles.<br />
+
+    This application source code is available at: <span style="font-weight:bold">
     <a href="https://github.com/psws/_52Cards">https://github.com/psws/_52Cards</a></span>><br />
     Download the _52Cards project  <br />
+    Open Visual Studio with the <span style="color:green; font-style :italic;font-weight:bold">Shiftwise._52cards.sln</span> file<br />
+    It may take some time for all of the nuget packages to be retrieved for the solution.<br />
+    This retrieval is automatic<br />
+    <br />
+    When the solution is finished loading you may need to set the startup project
 
-    The application is built with Microdoft Visual Studio 2013<br />
-    The application Solution <span style="color:green; font-style :italic;font-weight:bold">Shiftwise._52cards.sln</span> containss  10 Visual Studio projects<br />
-    The project's functionality were guided by the Separation of Concerns (SOC) principles.
+    <div style="padding-left: 50px;">
+        In vs2013 Right click the top <span style="color:green; font-weight:bold">Solution 'Shiftwise._52cards'</span> folder<br />
+        Select the menu dropdown <span style="color:green; font-weight:bold">Set Startup projects</span>/ <br />
+        Set the dialog radio buttom for <span style="color:green; font-weight:bold">Single startup project</span><br />
+        select  <span style="color:green; font-weight:bold">Shiftwise._52cards.mvc.App</span> project in the dropdown<br />
+    </div>
+
+    Build the <span style="color:green; font-weight:bold">Debug</span> version of the Solution <br />
+    Run the application locally on Localhost in VS2013 <br />
+    The browser window will appear running the UI client code.<br /><br />
+
+    The deployed App <span style="font-weight:bold"><a href="http://pswsweb.com">http://pswsweb.com/</a></span> is responsive <br />
+    It can also be used on your tablet or smart phone.<br /><br />
+
+    <span style="font-weight:bold; color:brown;">Testing:</span> <br />
+        Perform the following steps to run the tests in Visual Studio.<br />
+        Go to the top level <span style="color:green; font-weight:bold">TEST</span> Menu, Select <span style="color:green; font-weight:bold">Windows</span>
+        then Select <span style="color:green; font-weight:bold">Test Explorer</span> <br />
+        The Test Explorer should show the 18 Tests, if the solution Build was successful<br />
+    Select <span style="color:green; font-weight:bold">Run All</span> and all 18 tests will run.
+
 </p>
