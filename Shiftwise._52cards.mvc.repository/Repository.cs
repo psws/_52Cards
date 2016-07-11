@@ -28,16 +28,7 @@ namespace Shiftwise._52cards.mvc.repository
                     CardElementDTOs = CardElementDTOs.OrderBy(x => x.Value).AsEnumerable();
                 }
 #else
-               //using (var context = new ContestqsoDataEntities())
-                //{
-                //    IQueryable<Qso> QsoQuery = context.Set<Qso>().AsNoTracking();
-                //    IQueryable<CallSign> CallSignQuery = context.Set<CallSign>().AsNoTracking();
-                //    var Callsigns = (from lc in CallSignQuery
-                //                     join lq in QsoQuery on lc.CallSignId equals lq.CallsignId
-                //                     where lq.LogId == Logid
-                //                     select lc).Distinct().ToList();
-                //    return Callsigns;
-                //}
+            //DB code goes here
 #endif
 
 
