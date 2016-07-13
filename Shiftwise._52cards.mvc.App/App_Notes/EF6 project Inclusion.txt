@@ -1,0 +1,5 @@
+﻿EF 6 needs to be in the following projects:
+	Shiftwise._52cards.mvc.DataModel  //DB generation and Revere engineering
+	Shiftwise._52cards.mvc.repository  //direct Db Acccess
+	Shiftwise._52cards.mvc.App.Tests  //exe accesses repository	
+	Shiftwise._52cards.mvc.App  //exe accesses repository

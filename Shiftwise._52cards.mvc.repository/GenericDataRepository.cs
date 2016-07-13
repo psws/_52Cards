@@ -17,7 +17,7 @@ namespace Shiftwise._52cards.mvc.repository
         public virtual IList<T> GetAll(params Expression<Func<T, object>>[] navigationProperties)
         {
             List<T> list;
-            using (var context = new _52CardsDB())
+            using (var context = new Cards52DB())
             {
                 IQueryable<T> dbQuery = context.Set<T>();
 
@@ -36,7 +36,7 @@ namespace Shiftwise._52cards.mvc.repository
              params Expression<Func<T,object>>[] navigationProperties)
         {
             List<T> list;
-            using (var context = new _52CardsDB())
+            using (var context = new Cards52DB())
             {
                 IQueryable<T> dbQuery = context.Set<T>();
                  
@@ -56,7 +56,7 @@ namespace Shiftwise._52cards.mvc.repository
              params Expression<Func<T, object>>[] navigationProperties)
         {
             T item = null;
-            using (var context = new _52CardsDB())
+            using (var context = new Cards52DB())
             {
                 IQueryable<T> dbQuery = context.Set<T>();
                  
@@ -79,7 +79,7 @@ namespace Shiftwise._52cards.mvc.repository
         }
         public virtual void AddRange(params T[] items)
         {
-            using (var context = new _52CardsDB())
+            using (var context = new Cards52DB())
             {
                 context.Configuration.AutoDetectChangesEnabled = false;
 
@@ -94,7 +94,7 @@ namespace Shiftwise._52cards.mvc.repository
 
         public virtual void Update(params T[] items)
         {
-            using (var context = new _52CardsDB())
+            using (var context = new Cards52DB())
             {
                 DbSet<T> dbSet = context.Set<T>();
                 foreach (T item in items)
@@ -117,7 +117,7 @@ namespace Shiftwise._52cards.mvc.repository
 
         public virtual IQueryable<T> Queryable(bool tracking)
         {
-            using (var context = new _52CardsDB())
+            using (var context = new Cards52DB())
             {
                 IQueryable<T> dbQuery;
                 if (tracking == false)

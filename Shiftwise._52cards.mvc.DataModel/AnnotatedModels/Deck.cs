@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Shiftwise._52cards.mvc.common.Enum;
 
-namespace Shiftwise._52cards.mvc.DataModel
+namespace Shiftwise._52cards.mvc.DataModel.AnnotatedModels
 {
     public class Deck
     {

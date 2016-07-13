@@ -1,0 +1,32 @@
+﻿You need to have your annotated models outside of the Model Mapping namesapce heirarchy
+
+http://stackoverflow.com/questions/768905/namespace-and-sub-namespaces
+
+No, there's nothing working that way down the tree. However, you don't need to include using directives
+ to go up the tree. In other words, if you use:
+namespace Root.Orders
+{
+    // Code
+}
+
+then any types in Root are already visible.
+
+++++++++++++++++++++++++++=
+If you place your annotated classes in the Shiftwise._52cards.mvc.DataModel.Model folder
+This snippet:
+using Shiftwise._52cards.mvc.DataEntities;
+
+
+	namespace Shiftwise._52cards.mvc.DataModel.Models.Mapping
+	{
+		public class RuleMap : EntityTypeConfiguration<Rule>
+		{
+
+
+Will find the Rule class in Shiftwise._52cards.mvc.DataModel/Rule.cs
+This is WRONG, since we need to have the reverse enginered Shiftwise._52cards.mvc.DataEntities/Rule.cs 
+If you move the annotated classes to Shiftwise._52cards.mvc.DataModel.AnnotatedModels
+The compiler will not find them when reverse traversing up the Shiftwise._52cards.mvc.DataModel.Models.Mapping namespace.
+The reverse traveersal will not include the new file location in the Shiftwise._52cards.mvc.DataModel.AnnotatedModels
+because of the Annotated model directory.
+ 

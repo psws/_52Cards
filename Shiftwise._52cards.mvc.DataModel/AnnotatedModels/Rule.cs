@@ -5,7 +5,7 @@ using System.Web;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Shiftwise._52cards.mvc.DataModel
+namespace Shiftwise._52cards.mvc.DataModel.AnnotatedModels
 {
     public class Rule
     {

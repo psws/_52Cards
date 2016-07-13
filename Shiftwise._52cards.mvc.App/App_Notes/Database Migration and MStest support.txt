@@ -1,0 +1,7 @@
+﻿In the Shiftwise._52cards.mvc.App project Add this Post Build step
+
+wcho copying files
+if not exist "$(SolutionDir)Shiftwise._52cards.mvc.App.Tests\bin\$(ConfigurationName)\App_Data" mkdir "$(SolutionDir)Shiftwise._52cards.mvc.App.Tests\bin\$(ConfigurationName)\App_Data"
+IF EXIST "$(ProjectDir)App_Data\Cards52DB2012.mdf"    xcopy "$(ProjectDir)App_Data\Cards52DB2012.mdf"  "$(SolutionDir)Shiftwise._52cards.mvc.App.Tests\bin\$(ConfigurationName)\App_Data"  /Y
+
+This is needed to propagate the mdf file to where the Tests expects it

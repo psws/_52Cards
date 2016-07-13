@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Shiftwise._52cards.mvc.DataEntities;
 using Shiftwise._52cards.mvc.dto;
 using Shiftwise._52cards.mvc.common.Enum;
+using Shiftwise._52cards.mvc.DataModel.Models;
 
 namespace Shiftwise._52cards.mvc.repository
 {
@@ -17,22 +18,50 @@ namespace Shiftwise._52cards.mvc.repository
             IEnumerable<CardElementDTO> CardElementDTOs = null;
             if (DataCardInfoDto.CardElementDTOs != null && DataCardInfoDto.CardElementDTOs.Length > 0)
             { //Sort deck in function Parameter
-                CardElementDTOs = DataCardInfoDto.CardElementDTOs.OrderBy(x=>x.Value);
+                CardElementDTOs = DataCardInfoDto.CardElementDTOs.OrderBy(x => x.Value);
             }
             else
-            {  //get deck from database
+            {  //get deck from database or local List
 #if NoDB
+                //local List
                 CardElementDTOs = CardDeck.GetCardDeck(DataCardInfoDto.Game);
                 if (CardElementDTOs != null)
                 {
                     CardElementDTOs = CardElementDTOs.OrderBy(x => x.Value).AsEnumerable();
                 }
 #else
-            //DB code goes here
+                //DB code goes here
+                try
+                {
+
+                    using (var context = new Cards52DBContext())
+                    {
+                        IQueryable<Rule> RuleQuery = context.Set<Rule>().AsNoTracking();
+                        IQueryable<Deck> DeckQuery = context.Set<Deck>().AsNoTracking();
+                        CardElementDTOs = (from rq in RuleQuery
+                                           join dj in DeckQuery on rq.DeckId equals dj.DeckId
+                                           where rq.GameName == DataCardInfoDto.Game
+                                           select new CardElementDTO
+                                           {
+                                               DeckId = rq.DeckId,
+                                               CardSuitEnum = (CardSuitEnum)dj.CardSuitEnum,
+                                               Value = rq.Value
+                                           }).OrderBy(x=>x.Value).ToArray();
+
+
+                    }
+
+
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(string.Format("GetDataCallInfoSelections exception {0}", ex.Message));
+                    throw;
+                }
 #endif
-
-
             }
+
             return CardElementDTOs;
         }
 

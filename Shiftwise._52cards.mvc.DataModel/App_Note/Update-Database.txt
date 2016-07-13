@@ -1,0 +1,12 @@
+﻿Open The Visual Studio - View menu=>Other Windows=>Package Manager Console
+Run one of one the following commands:
+SQL 2012:
+Update-Database -Force -ProjectName Shiftwise._52cards.mvc.DataModel -StartupProjectName Shiftwise._52cards.mvc.App -ConfigurationTypeName Shiftwise._52cards.mvc.DataModel.Migrations.Cards52DB.Configuration -Verbose -ConnectionStringName "_52CardSQLExpress2012"
+SQL2014
+Update-Database -Force -ProjectName Shiftwise._52cards.mvc.DataModel -StartupProjectName Shiftwise._52cards.mvc.App -ConfigurationTypeName Shiftwise._52cards.mvc.DataModel.Migrations.Cards52DB.Configuration -Verbose -ConnectionStringName "_52CardSQLExpress2014"
+
+This command will execute the Migration step.
+An MDF SQl database file is generated in the Shiftwise._52cards.mvc.App projecst App_Data directory
+When you execute the App the mdf database is attached to the test server
+The file remains attached to the server when execution completes
+The App tests can mow be ran as they uses the attached database.

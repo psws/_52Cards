@@ -1,66 +1,81 @@
-﻿Using installed extendion Microsoft entity power tools beta 4
+﻿Install the Visual Studio Extension 'Entity Framework Power Tools Beta 4'
+This is required for the reverse ebgineering of Entities.
+
+Using installed extendion Microsoft entity power tools beta 4
 right click on Shiftwise._52cards.mvc.DataModel project
 select entity framework select reverse engineer code first
 set server to (LocalDb)\v11.0
 Set sql sever account radio button
 	Use User Authentication
-select a database name = _52Cards
+select a database name = Cards52DB2012 or Cards52DB2014  //  _52Cards is not good for reverse engineering because it starts with _ illegal char
+	Canniot start with a number in reverse engineering for localDb which is compact SQL Server
+	This project supports 2 SQl DBs so we need 2 distinct DB names due to .ldf file conflict
+
 Click advanced tab
 go to  Security section
 Check persist security informatin = true
 
-A ContestqsoData Data models directory will be created.
+A Cards52DB Models directory will be created.
 Ths directory has a Sub directory Mapping
-Perform the following steps to separate the Entities project from EF6
-Move the Logqso.mvc.DataModel/Models folder to:
-	Logqso.mvs.DataModel/LogData foldeer
-	Leave the LogDataContext.cs file in the Logqso.mvs.DataModel/LogData/Models foldeer
+Perform the following steps to separate the Entities project from DataModel
+
+	Leave the Cards52DBContext.cs file in the Shiftwise._52cards.mvc.DataModel/Models foldeer
 	Move all the remaining files, in the Models folder to the Logqso.mvc.Entities/LogDataEntity foldeer.
-	Leave the Logqso.mvs.DataModel/LogData/Models/Mapping folder in the Logqso.mvs.DataModel/LogData/Models folder.
+	Leave the Shiftwise._52cards.mvc.DataModel/Models.Mapping folder in Shiftwise._52cards.mvc.DataModel.Models folder.
 		be sure to change its namespace to Logqso.mvc.DataModel.LogData.Models
 
-	edit every file in the Logqso.mvs.DataModel/LogData/Models/mapping folder change/add the following:
-		using Logqso.mvc.Entities.LogDataEntity;
+	edit every file in the Shiftwise._52cards.mvc.DataModel/Models.Mapping folder change/add the following:
+		using Shiftwise._52cards.mvc.DataEntities;
 
-		namespace Logqso.mvc.DataModel.LogData.Models.Mapping
+		namespace Shiftwise._52cards.mvc.DataModel.Models.Mapping
 
-	edit every file in the Logqso.mvc.Entities/LogDataEntity folder change/add the following:
-		using Infrastructure;
+	edit every file in the Shiftwise._52cards.mvc.DataEntities folder change/add the following:
 
-		namespace Logqso.mvc.Entities.LogDataEntity
+		namespace using Shiftwise._52cards.mvc.DataEntities;
+
 		//evety file must derive from  : Entity in the LogControlEntity
-		public partial class Qso : Entity
+		public partial class Rule : Entity
 
-	edit the Logqso.mvs.DataModel/LogData/Models/ContestqsoDataContext file ( needs to derive from DataContext
-using System.Data.Entity;
+		add property to each entity file:
+		        public EntityState EntityState { get; set; }
+
+
+	edit the Logqso.mvs.DataModel/LogData/Models/Cards52DBContext file 
 using System.Data.Entity.Infrastructure;
-using Repository.Pattern.Ef6;
+using Shiftwise._52cards.mvc.DataModel.Models.Mapping;
+using Shiftwise._52cards.mvc.DataEntities;
 
-using Logqso.mvc.DataModel.LogData.Models.Mapping;
-using Logqso.mvc.Entities.LogDataEntity;
 
-using Repository.Pattern.Extensions.interfaces;
-
-namespace Logqso.mvc.DataModel.LogData.Models
+namespace Shiftwise._52cards.mvc.DataModel.Models
 {
-    public partial class ContestqsoDataContext : DataContext, ILogqsoDataContext
+    public partial class Cards52DBContext : DbContext
     {
-        static ContestqsoDataContext()
+        static Cards52DBContext()
         {
-            Database.SetInitializer<ContestqsoDataContext>(null);
+            Database.SetInitializer<Cards52DBContext>(null);
         }
 
-        public ContestqsoDataContext()
-#if CONTESTQSODEBUG || CONTESTQSORELEASE
-            : base("Name=LogDataDBhostfest")
-#elif CONTESTQSO1n1DEBUG
-        : base("Name=LogDataDB1and1")
-#elif CONTESTQSOSQL2012
-            : base("Name=LogDataDBsql2012")
+        public Cards52DBContext()
+        
+#if SQL2012 
+            : base("Name=_52CardSQLExpress2012") {
+#elif SQL2014
+            : base("Name=_52CardSQLExpress2014") {
 #else
-            : base("Name=LogDataDB")
-#endif        {
+            : base("Name=Cards52DBContext") {//No context needed, uses local list in Repo 
+#endif  
+
         }
+
+        public DbSet<Deck> Decks { get; set; }
+        public DbSet<Rule> Rules { get; set; }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            modelBuilder.Configurations.Add(new DeckMap());
+            modelBuilder.Configurations.Add(new RuleMap());
+        }
+    }
 
 
 

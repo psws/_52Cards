@@ -20,12 +20,19 @@
 		}
 	}
 
-setup configuration string in web.config
-    <add name="_52CardSQLExpress2012" connectionString="Data Source=(LocalDb)\v11.0;AttachDbFilename=|DataDirectory|\_52Cards.mdf;Integrated Security=True" providerName="System.Data.SqlClient" />
-    <add name="_52CardSQLExpress2014" connectionString="Data Source=(localdb)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\_52Cards.mdf;Integrated Security=True" providerName="System.Data.SqlClient" />
+setup configuration string in Shiftwise._52cards.mvc.App.Web.config
+    <add name="_52CardSQLExpress2012" connectionString="Data Source=(LocalDb)\v11.0;AttachDbFilename=|DataDirectory|\Cards52DB2012.mdf;Initial Catalog=Cards52DB2012;Integrated Security=True;MultipleActiveResultSets=True;App=EntityFramework" providerName="System.Data.SqlClient" />
+    <add name="_52CardSQLExpress2014" connectionString="Data Source=(localdb)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\Cards52DB2014.mdf;Initial Catalog=Cards52DB2014;Integrated Security=True;MultipleActiveResultSets=True;App=EntityFramework" providerName="System.Data.SqlClient" />
 or add for different DB
 
-	NOTE: Make sure your class derives from _52CardsDB : DbContext
+setup configuration string in Shiftwise._52cards.mvc.App.Tests/App.config, the test framework needs these
+There is no attachDbfilename beacauae by building the app and running once, the DB remains attached to the configred DB
+    <add name="_52CardSQLExpress2012" connectionString="Data Source=(LocalDb)\v11.0;Initial Catalog=Cards52DB2012;Integrated Security=True;MultipleActiveResultSets=True;App=EntityFramework" providerName="System.Data.SqlClient" />
+    <add name="_52CardSQLExpress2014" connectionString="Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Cards52DB2014;Integrated Security=True;MultipleActiveResultSets=True;App=EntityFramework" providerName="System.Data.SqlClient" />
+or add for different DB
+
+
+	NOTE: Make sure your class derives from _52CardsDB : DbContext in Shiftwise._52cards.mvc.DataModel/_52CardsDataDB
 create this file in the same namespace as the model classes (Shiftwise._52cards.mvc.DataModel):
 namespace Shiftwise._52cards.mvc.DataModel
 	{
@@ -38,8 +45,8 @@ namespace Shiftwise._52cards.mvc.DataModel
         {
         }
 
-        public DbSet<Shiftwise._52cards.mvc.DataModel.Deck> Deck { get; set; }
-        public DbSet<Shiftwise._52cards.mvc.DataModel.Rule> Rule { get; set; }
+        public DbSet<Shiftwise._52cards.mvc.DataModel.AnnotatedModels.Deck> Deck { get; set; }
+        public DbSet<Shiftwise._52cards.mvc.DataModel.AnnotatedModels.Rule> Rule { get; set; }
 
         //public DbSet<Logqso.mvc.DataModel.LogData.CallInfoModels.CallInfoDefault> CallInfoDefault { get; set; }
 
@@ -58,22 +65,27 @@ namespace Shiftwise._52cards.mvc.DataModel
 	}
  
 
-Then run this command in the pm
-PM> Enable-Migrations -Force -ProjectName Shiftwise._52cards.mvc.DataModel -StartupProjectName Shiftwise._52cards.mvc.App -ContextTypeName Shiftwise._52cards.mvc.DataModel._52CardsDB -MigrationsDirectory Migrations\_52CardsDB
-
-Next do the Add-Migration
-
-PM> Add-Migration -ProjectName Shiftwise._52cards.mvc.DataModel -Force -StartupProjectName Shiftwise._52cards.mvc.App -ConfigurationTypeName Shiftwise._52cards.mvc.DataModel.Migrations._52CardsDB.Configuration "InitialDatabaseCreation" 
+Then run theses commands in the Package manager Console. –EnableAutomaticMigrations removed when 2 or more DB exists
+PM> Enable-Migrations -Force -ProjectName Shiftwise._52cards.mvc.DataModel -StartupProjectName Shiftwise._52cards.mvc.App -ContextTypeName Shiftwise._52cards.mvc.DataModel.Cards52DB -MigrationsDirectory Migrations\Cards52DB   
 
 
-NEXT:
-Add any seed data in the configuration.cs file
+PM> Add-Migration -ProjectName Shiftwise._52cards.mvc.DataModel -Force -StartupProjectName Shiftwise._52cards.mvc.App -ConfigurationTypeName Shiftwise._52cards.mvc.DataModel.Migrations.Cards52DB.Configuration "InitialDatabaseCreation" 
+	NEXT:
+	Add any seed data in the configuration.cs file
                    DeckSeeds.SeedContest(context);
-                   RowSeeds.SeedContest(context);
+                   RuleSeeds.SeedContest(context);
 
-PM>Update-Database -Force -ProjectName Shiftwise._52cards.mvc.DataModel -StartupProjectName Shiftwise._52cards.mvc.App -ConfigurationTypeName Shiftwise._52cards.mvc.DataModel.Migrations._52CardsDB.Configuration -Verbose -ConnectionStringName "_52CardSQLExpress2012"
+IF YOU ARE TSETING REMOVE –EnableAutomaticMigrations  from the Enable-Migrations STEP
+THEN YOU CAN RUN THE Update-Database COMMAND MANUALLY. THIS CREATES THE DATABASE MANUALLY FROM PM
+SQL 2012:
+PM>Update-Database -Force -ProjectName Shiftwise._52cards.mvc.DataModel -StartupProjectName Shiftwise._52cards.mvc.App -ConfigurationTypeName Shiftwise._52cards.mvc.DataModel.Migrations.Cards52DB.Configuration -Verbose -ConnectionStringName "_52CardSQLExpress2012"
+SQL2014
+PM>Update-Database -Force -ProjectName Shiftwise._52cards.mvc.DataModel -StartupProjectName Shiftwise._52cards.mvc.App -ConfigurationTypeName Shiftwise._52cards.mvc.DataModel.Migrations.Cards52DB.Configuration -Verbose -ConnectionStringName "_52CardSQLExpress2014"
 
-The mdf file will be created in the  Shiftwise._52cards.mvc.App\AppData directory
+	The mdf file will be created in the  Shiftwise._52cards.mvc.App\AppData directory
+	You cannot check in the mdf file to GitHub
+	Each Database needs its own distinct mdf file ,if you want to flip back and forth.
+	If you just use 1 buid configuration then you just run the Updaye database once.
 
 
 

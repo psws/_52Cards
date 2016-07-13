@@ -15,14 +15,16 @@
         <div style="padding-left: 80px;">
             <span style="font-weight:bold; color:purple;">
             Bridge List in the repository(Debug build)<br />
-            SQl2012(Debug2012 build)<br />
-            SQL2014(Debug2014 build) <br />
+            SQL Server (LocalDb)\v11.0 (DebugSQL2012 build)<br />
+            SQl Server (localdb)\MSSQLLocalDB (DebugSQL2014 build) <br />
             </span>
        </div>
         <span style="font-weight:bold; color:brown; padding-right: 30px">Testing:</span> Visual Studio Test Explorer, 14 Unit tests, 4 Integration Tests<br />
     </div>
     <br />
     The application can be accessed at <span style="font-weight:bold"> <a href="http://pswsweb.com" target="_blank">http://pswsweb.com/</a></span><br />
+    The deployed App <span style="font-weight:bold"><a href="http://pswsweb.com" target="_blank">http://pswsweb.com/</a></span> is responsive <br />
+    It can also be used on your tablet or smart phone.<br /><br />
 <p>
     The Sort method uses a Bridge card order.<br />
     The Shuffle routine guarantees no cards, in ascending order, sequences.<br /><br />
@@ -50,15 +52,45 @@
     Build the <span style="color:green; font-weight:bold">Debug</span> version of the Solution <br />
     Run the application locally on Localhost in VS2013 <br />
     The browser window will appear running the UI client code.<br /><br />
+    <br />
+    <span style="font-weight:bold; color:brown;">Using a SQL database:</span> <br />
+    The solution directly supports 2 SQL servers. <br />
+    One of these test SQL Severs is usually installed when you install a Visual Studio version.<br />
+    Pick a SQL Server from the list below.<br />
+    Run the specified Update-Database command once, in the Visual Studio Package Manager<br />
+    More info on this command is available in the Shiftwise._52cards.mvc.DataModel project<br />
+    Look in the <span style="color:green; font-weight:bold">Update-Database.txt</span> file, in the App_Notes directory<br />
+    
+    <div style="padding-left: 50px;">
+        <span style="color:green; font-weight:bold">Visual Studio 2012, 2010 (LocalDb)\v11.0 Server</span> <br />
+        <div style="padding-left: 30px;">
+            Set the build Configuration to DebugSQL2012 and run<br />
+            <span style="font-size:9px; ;">Update-Database -Force -ProjectName Shiftwise._52cards.mvc.DataModel -StartupProjectName Shiftwise._52cards.mvc.App -ConfigurationTypeName Shiftwise._52cards.mvc.DataModel.Migrations.Cards52DB.Configuration -Verbose -ConnectionStringName "_52CardSQLExpress2012"</span>
+        </div>
+        <span style="color:green; font-weight:bold">Visual Studio 2013 (localdb)\MSSQLLocalDB Server</span><br />
+        <div style="padding-left: 30px;">
+            Set the build configuration to DebugSQL2014 and run:<br />
+            <span style="font-size:9px; ;">Update-Database -Force -ProjectName Shiftwise._52cards.mvc.DataModel -StartupProjectName Shiftwise._52cards.mvc.App -ConfigurationTypeName Shiftwise._52cards.mvc.DataModel.Migrations.Cards52DB.Configuration -Verbose -ConnectionStringName "_52CardSQLExpress2014"</span>
+        </div>
 
-    The deployed App <span style="font-weight:bold"><a href="http://pswsweb.com" target="_blank">http://pswsweb.com/</a></span> is responsive <br />
-    It can also be used on your tablet or smart phone.<br /><br />
+        <span style="color:green; font-weight:bold">Other SQL Server</span> <br />
+        <div style="padding-left: 30px;">
+            You will need to change one of the Connection string's DataSource in 2 places:<br />
+            <div style="padding-left: 30px;">
+                Shiftwise._52cards.mvc.App, Web.config file, for the app to run.<br />
+                Shiftwise._52cards.mvc.App.Tests, App.config, for the Tests to run<br />
+            </div>
+            Select the build configuration for the connection string you changed
+        </div>
+    </div>
+
+    <br />
 
     <span style="font-weight:bold; color:brown;">Testing:</span> <br />
-        Perform the following steps to run the tests in Visual Studio.<br />
-        Go to the top level <span style="color:green; font-weight:bold">TEST</span> Menu, Select <span style="color:green; font-weight:bold">Windows</span>
-        then Select <span style="color:green; font-weight:bold">Test Explorer</span> <br />
-        The Test Explorer should show the 18 Tests, if the solution Build was successful<br />
+    Perform the following steps to run the tests in Visual Studio.<br />
+    Go to the top level <span style="color:green; font-weight:bold">TEST</span> Menu, Select <span style="color:green; font-weight:bold">Windows</span>
+    then Select <span style="color:green; font-weight:bold">Test Explorer</span> <br />
+    The Test Explorer should show the 18 Tests, if the solution Build was successful<br />
     Select <span style="color:green; font-weight:bold">Run All</span> and all 18 tests will run.
 
 </p>

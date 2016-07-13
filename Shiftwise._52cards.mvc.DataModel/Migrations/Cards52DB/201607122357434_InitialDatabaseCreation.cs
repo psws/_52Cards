@@ -1,4 +1,4 @@
-namespace Shiftwise._52cards.mvc.DataModel.Migrations._52CardsDB
+namespace Shiftwise._52cards.mvc.DataModel.Migrations.Cards52DB
 {
     using System;
     using System.Data.Entity.Migrations;
@@ -22,7 +22,7 @@ namespace Shiftwise._52cards.mvc.DataModel.Migrations._52CardsDB
                     {
                         DeckId = c.String(nullable: false, maxLength: 20, unicode: false),
                         GameName = c.String(nullable: false, maxLength: 35, unicode: false),
-                        value = c.Short(nullable: false),
+                        Value = c.Short(nullable: false),
                     })
                 .PrimaryKey(t => new { t.DeckId, t.GameName })
                 .ForeignKey("dbo.Deck", t => t.DeckId, cascadeDelete: true)

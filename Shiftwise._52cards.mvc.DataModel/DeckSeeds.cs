@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Shiftwise._52cards.mvc.common.Enum;
+using Shiftwise._52cards.mvc.DataModel.AnnotatedModels;
 
 namespace Shiftwise._52cards.mvc.DataModel
 {
@@ -13,7 +14,7 @@ namespace Shiftwise._52cards.mvc.DataModel
     {
         //  add to configuration.cs          DeckSeeds.SeedContest(context);
 
-        public static void SeedContest(Shiftwise._52cards.mvc.DataModel._52CardsDB context)
+        public static void SeedContest(Shiftwise._52cards.mvc.DataModel.Cards52DB context)
         {
 
             context.Deck.AddOrUpdate(

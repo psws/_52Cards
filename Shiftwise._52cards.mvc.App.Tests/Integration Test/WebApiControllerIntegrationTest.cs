@@ -13,6 +13,7 @@ using Shiftwise._52cards.mvc.dto;
 using Shiftwise._52cards.mvc.common.Enum;
 using Shiftwise._52cards.mvc.repository;
 using Shiftwise._52cards.mvc.DataEntities;
+using System.IO;
 
 
 namespace Shiftwise52cards.mvc.App.Tests.Unit_Test.Repositories
@@ -32,6 +33,7 @@ namespace Shiftwise52cards.mvc.App.Tests.Unit_Test.Repositories
         private bool insequence { get; set; }
       
         private ICardService ICardService { get; set; }
+        //private string valu;
 
         [TestInitialize]
         public void Initialize()
@@ -42,6 +44,16 @@ namespace Shiftwise52cards.mvc.App.Tests.Unit_Test.Repositories
             CardElementDTOCount = CardElementDTOsExpected.Count();
             CardElementDTO_Out = null;
             insequence = false;
+#if false
+                //not needed since running App once leaves the DB attached to the configuration Data Source
+#if !NoDB
+            //point app domain to mdf file
+        //http://stackoverflow.com/questions/12244495/how-to-set-up-localdb-for-unit-tests-in-visual-studio-2012-and-entity-framework
+            //Seen the 'Running tests with a DataDirectory attached mdf DB file' in the App_Notes
+            AppDomain.CurrentDomain.SetData("DataDirectory", AppDomain.CurrentDomain.BaseDirectory + @"\App_Data");
+            //valu = AppDomain.CurrentDomain.GetData("DataDirectory") as string;
+#endif
+#endif
         }
 
         [TestMethod]
@@ -59,7 +71,6 @@ namespace Shiftwise52cards.mvc.App.Tests.Unit_Test.Repositories
                 bool caught = false;
 
                 // Act
-#if NoDB
                 try
                 {
                     _52DataController controller = new _52DataController(ICardService);
@@ -113,7 +124,6 @@ namespace Shiftwise52cards.mvc.App.Tests.Unit_Test.Repositories
                         Assert.AreEqual(CardElementDTO.Value, item.Value );
                     }
                 }
-#endif
             }
         }
 
@@ -135,7 +145,6 @@ namespace Shiftwise52cards.mvc.App.Tests.Unit_Test.Repositories
                 bool caught = false;
 
                 // Act
-#if NoDB
                 try
                 {
                     _52DataController controller = new _52DataController(ICardService);
@@ -192,7 +201,6 @@ namespace Shiftwise52cards.mvc.App.Tests.Unit_Test.Repositories
                         Assert.AreEqual(CardElementDTO.Value, item.Value);
                     }
                 }
-#endif
             }
         }
 
@@ -212,7 +220,6 @@ namespace Shiftwise52cards.mvc.App.Tests.Unit_Test.Repositories
                 bool caught = false;
 
                 // Act
-#if NoDB
                 try
                 {
                     _52DataController controller = new _52DataController(ICardService);
@@ -233,7 +240,6 @@ namespace Shiftwise52cards.mvc.App.Tests.Unit_Test.Repositories
                 // Assert
                 Assert.IsFalse(caught);  //exception
                 Assert.IsNull(CardElementDTO_Out);
-#endif
             }
         }
 
@@ -254,7 +260,6 @@ namespace Shiftwise52cards.mvc.App.Tests.Unit_Test.Repositories
                 bool caught = false;
 
                 // Act
-#if NoDB
                 try
                 {
                     _52DataController controller = new _52DataController(ICardService);
@@ -352,7 +357,6 @@ namespace Shiftwise52cards.mvc.App.Tests.Unit_Test.Repositories
 	                }
 
                 }
-#endif
             }
         }
 
